@@ -13,7 +13,7 @@ variables:
   dockerRegistryServiceConnection: '11183bc0-c03c-4053-9f08-07c35600abb3'
   imageRepository: 'thaloscaeasytraveldocker'
   containerRegistry: 'easyregistry1.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/images/angular-frontend/Dockerfile'
+  dockerfilePath: 'https://github.com/Dynatrace/easyTravel-Docker/tree/master/images/angularfrontend'
   tag: '$(Build.BuildId)'
 
   # Agent VM image name
