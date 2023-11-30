@@ -1,0 +1,37 @@
+version: '3'
+services:
+  mongodb:
+    hostname: easytravel-mongodb
+    container_name: mongodb
+    image: "dynatrace/easytravel-mongodb"
+    ports:
+      - 27017
+      - 28017
+
+  backend:
+    hostname: easytravel-backend
+    container_name: backend
+    image: "dynatrace/easytravel-backend"
+    ports:
+      - 8091:8080
+    links:
+      - mongodb
+    environment:
+      CATALINA_OPTS: "-Dconfig.apmServerDefault=${ET_APM_SERVER_DEFAULT} -Xmx300m"
+      ET_DATABASE_LOCATION: "easytravel-mongodb:27017"
+      ET_MONGO_AUTH_DB: "admin"
+      ET_DATABASE_USER: "etAdmin"
+      ET_DATABASE_PASSWORD: "adminadmin"
+
+  frontend:
+    hostname: easytravel-frontend
+    container_name: frontend
+    image: "dynatrace/easytravel-frontend"
+    ports:
+      - 8080
+    links:
+      - backend
+      - mongodb
+    environment:
+      CATALINA_OPTS: "-Dconfig.apmServerDefault=${ET_APM_SERVER_DEFAULT} -Xmx525m"
+      ET_BACKEND_URL: "http://easytravel-backend:8080"
