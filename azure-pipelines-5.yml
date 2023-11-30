@@ -2,11 +2,11 @@ FROM tomcat:9.0.78-jdk11-temurin-focal
 
 LABEL maintainer="Rafal Psciuk <rafal.psciuk@dynatrace.com>, Tomasz Wieremjewicz <tomasz.wieremjewicz@dynatrace.com>"
 
-# Deploy easyTravel Customer Frontend Application
-COPY build/angularFrontend.war ${CATALINA_HOME}/webapps/
+# Deploy easyTravel Business Backend Application
+COPY build/backend.war ${CATALINA_HOME}/webapps/
 
 # Make easyTravel Business Backend application base '/' context
-RUN mv ${CATALINA_HOME}/webapps/angularFrontend.war ${CATALINA_HOME}/webapps/ROOT.war
+RUN mv ${CATALINA_HOME}/webapps/backend.war ${CATALINA_HOME}/webapps/ROOT.war
 
 ENV ET_RUNTIME_DEPS "bash curl netcat-openbsd openssl"
 RUN apt-get update && apt-get install -y ${ET_RUNTIME_DEPS}
