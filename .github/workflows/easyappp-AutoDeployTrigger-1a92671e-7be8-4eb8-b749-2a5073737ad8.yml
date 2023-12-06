@@ -1,0 +1,45 @@
+name: Trigger auto deployment for easyappp
+
+# When this action will be executed
+on:
+  # Automatically trigger it when detected changes in repo
+  push:
+    branches: 
+      [ master ]
+    paths:
+    - '**'
+    - '.github/workflows/easyappp-AutoDeployTrigger-1a92671e-7be8-4eb8-b749-2a5073737ad8.yml'
+
+  # Allow manual trigger 
+  workflow_dispatch:      
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions: 
+      id-token: write #This is required for requesting the OIDC JWT Token
+
+    steps:
+      - name: Checkout to the branch
+        uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.EASYAPPP_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.EASYAPPP_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.EASYAPPP_AZURE_SUBSCRIPTION_ID }}
+
+      - name: Build and push container image to registry
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          appSourcePath: ${{ github.workspace }} 
+          registryUrl: easyregistry1.azurecr.io
+          registryUsername: ${{ secrets.EASYAPPP_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.EASYAPPP_REGISTRY_PASSWORD }}
+          containerAppName: easyappp
+          resourceGroup: NetworkWatcherRG
+          imageToBuild: easyregistry1.azurecr.io/easyappp:${{ github.sha }}
+          dockerfilePath: Dockerfile
+
+
